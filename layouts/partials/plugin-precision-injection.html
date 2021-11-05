@@ -25,7 +25,7 @@ keys:
 
     {{ $prefix := printf "%s." $prefix }}
 
-    {{ range $include_directive := site.Params.plugins_html }}
+    {{ range $include_directive := site.Params.plugins_html | uniq }}
   
       {{ if (hasPrefix $include_directive $prefix) }}
     
@@ -42,7 +42,7 @@ keys:
 {{/* Otherwise, inject all non-prefixed plugin HTML files */}}   
 {{ else }}
 
-  {{ range $include_directive := site.Params.plugins_html }}
+  {{ range $include_directive := site.Params.plugins_html | uniq }}
   
     {{ $prefix := $include_directive | findRE "^[A-Z_]+[.].*" }}
     
