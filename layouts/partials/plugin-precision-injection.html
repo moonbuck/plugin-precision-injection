@@ -1,0 +1,48 @@
+{{/* 
+
+Ths partial takes a single parameter as its input.
+
+Pass one of the prefixes from the supported prefixes list to inject only plugin HTML files whose include directive includes the prefix.
+
+Pass nothing to inject all plugin HTML files without one of the supported prefixes in their include directive.
+
+This partial expects prefixed file include directives to insert a `.` between the prefix and the actual file name.
+
+*/}}
+
+{{/* Retrieve the list of prefixes */}}
+{{ $supported := site.Params.precision_injection_prefix_list | default "HEAD_TOP,ABOVE_HEADER,BELOW_FOOTER,FOOTER" | split "," }}
+
+{{/* Check whether a prefix has been provided  */}}
+{{ with . where "." "in" $supported }}
+
+{{ $prefix := printf "%s." . }}
+
+  {{ range $include_directive := site.Params.plugins_html }}
+
+    {{ if (hasPrefix $include_directive $prefix) }}
+  
+      {{ $include_file := strings.TrimPrefix $prefix . }}
+
+      {{- partial $include_file $ }}
+
+    {{ end }}
+
+   {{ end }}
+
+{{/* Otherwise, inject all non-prefixed plugin HTML files */}}   
+{{ else }}
+
+  {{ range site.Params.plugins_html }}
+  
+    {{ $prefix := index (split . ".") 0 }}
+  
+    {{ if not (in $supported $prefix) }}
+    
+      {{ partial . $ }}
+      
+    {{ end }}
+  
+  {{ end }}
+
+{{ end }}

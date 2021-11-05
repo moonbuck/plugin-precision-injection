@@ -1,0 +1,12 @@
+{
+  "version": "1.0.0",
+  "title": "Moondeer's Precision Injection",
+  "description": "Facilitates injecting plugin html in precise locations",
+  "fields": [
+    {  
+      "field": "params.precision_injection_prefix_list",  
+      "label": "Prefix List",  
+      "placeholder": "HEAD_TOP,ABOVE_HEADER,BELOW_FOOTER,FOOTER"  
+    }  
+  ]
+}
