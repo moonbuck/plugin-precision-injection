@@ -2,46 +2,45 @@
 
 Ths partial takes a single parameter as its input.
 
-Pass one of the prefixes from the supported prefixes list to inject only plugin HTML files whose include directive includes the prefix.
+Pass a prefix of the form 'I_AM_A_PREFIX' or, more simply 'PREFIX' (the prefixes I personally use are currently HEAD_TOP, ABOVE_HEADER, BELOW_FOOTER, FOOTER) to inject only plugin HTML files whose include directive includes the prefix followed by a dot followed by the actual file name.
 
-Pass nothing to inject all plugin HTML files without one of the supported prefixes in their include directive.
-
-This partial expects prefixed file include directives to insert a `.` between the prefix and the actual file name.
+Pass nothing to inject all plugin HTML files without a prefix of the format specified above.
 
 */}}
 
-{{/* Retrieve the list of prefixes */}}
-{{ $supported := site.Params.precision_injection_prefix_list | default "HEAD_TOP,ABOVE_HEADER,BELOW_FOOTER,FOOTER" | split "," }}
 
 {{/* Check whether a prefix has been provided  */}}
-{{ with . where "." "in" $supported }}
+{{ with . }}
 
-{{ $prefix := printf "%s." . }}
+  {{ $prefix := . | findRE "^[A-Z_]+$" }}
+  {{ if $prefix }}{{ $prefix = index $prefix 0 }}{{ end }}
 
-  {{ range $include_directive := site.Params.plugins_html }}
+  {{ if $prefix }}
 
-    {{ if (hasPrefix $include_directive $prefix) }}
+    {{ $prefix := printf "%s." $prefix }}
+
+    {{ range $include_directive := site.Params.plugins_html }}
   
-      {{ $include_file := strings.TrimPrefix $prefix . }}
-
-      {{- partial $include_file $ }}
-
-    {{ end }}
-
+      {{ if (hasPrefix $include_directive $prefix) }}
+    
+        {{ $include_file := $include_directive | strings.TrimPrefix $prefix }}
+  
+        {{- partial $include_file $ }}
+  
+      {{ end }}
+  
+     {{ end }}
+     
    {{ end }}
 
 {{/* Otherwise, inject all non-prefixed plugin HTML files */}}   
 {{ else }}
 
-  {{ range site.Params.plugins_html }}
+  {{ range $include_directive := site.Params.plugins_html }}
   
-    {{ $prefix := index (split . ".") 0 }}
-  
-    {{ if not (in $supported $prefix) }}
+    {{ $prefix := $include_directive | findRE "^[A-Z_]+[.].*" }}
     
-      {{ partial . $ }}
-      
-    {{ end }}
+    {{ if not $prefix }}{{ partial $include_directive $ }}{{ end }}
   
   {{ end }}
 
