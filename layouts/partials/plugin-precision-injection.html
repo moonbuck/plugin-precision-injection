@@ -1,4 +1,4 @@
-{{/* 
+{{- /* 
 
 This partial expects a dictionary as its parameter.
 
@@ -10,44 +10,44 @@ keys:
 
 */}}
 
-{{/* printf "<!--plugin-precision-injection v1.0.0-->" | safeHTML */}}
+{{- /* printf "<!--plugin-precision-injection v1.0.0-->" | safeHTML */}}
 
-{{/* Capture the context */}}
-{{ $context := .context }}
+{{- /* Capture the context */}}
+{{- $context := .context }}
 
-{{/* Check whether a prefix has been provided  */}}
-{{ with .prefix }}
+{{- /* Check whether a prefix has been provided  */}}
+{{- with .prefix }}
 
-  {{ $prefix := . | findRE "^[A-Z_]+$" }}
-  {{ if $prefix }}{{ $prefix = index $prefix 0 }}{{ end }}
+  {{- $prefix := . | findRE "^[A-Z_]+$" }}
+  {{- if $prefix }}{{ $prefix = index $prefix 0 }}{{ end }}
 
-  {{ if $prefix }}
+  {{- if $prefix }}
 
-    {{ $prefix := printf "%s." $prefix }}
+    {{- $prefix := printf "%s." $prefix }}
 
-    {{ range $include_directive := site.Params.plugins_html | uniq }}
+    {{- range $include_directive := site.Params.plugins_html | uniq }}
   
-      {{ if (hasPrefix $include_directive $prefix) }}
+      {{- if (hasPrefix $include_directive $prefix) }}
     
-        {{ $include_file := $include_directive | strings.TrimPrefix $prefix }}
+        {{- $include_file := $include_directive | strings.TrimPrefix $prefix }}
   
         {{- partial $include_file $context }}
   
-      {{ end }}
+      {{- end }}
   
-     {{ end }}
+     {{- end }}
      
-   {{ end }}
+   {{- end }}
 
-{{/* Otherwise, inject all non-prefixed plugin HTML files */}}   
-{{ else }}
+{{- /* Otherwise, inject all non-prefixed plugin HTML files */}}   
+{{- else }}
 
-  {{ range $include_directive := site.Params.plugins_html | uniq }}
+  {{- range $include_directive := site.Params.plugins_html | uniq }}
   
-    {{ $prefix := $include_directive | findRE "^[A-Z_]+[.].*" }}
+    {{- $prefix := $include_directive | findRE "^[A-Z_]+[.].*" }}
     
-    {{ if not $prefix }}{{ partial $include_directive $context }}{{ end }}
+    {{- if not $prefix }}{{ partial $include_directive $context }}{{ end }}
   
-  {{ end }}
+  {{- end }}
 
-{{ end }}
+{{- end }}
