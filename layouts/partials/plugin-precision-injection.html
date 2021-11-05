@@ -18,7 +18,7 @@ keys:
 {{/* Check whether a prefix has been provided  */}}
 {{ with .prefix }}
 
-  {{ $prefix := .prefix | findRE "^[A-Z_]+$" }}
+  {{ $prefix := . | findRE "^[A-Z_]+$" }}
   {{ if $prefix }}{{ $prefix = index $prefix 0 }}{{ end }}
 
   {{ if $prefix }}
