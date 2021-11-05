@@ -8,6 +8,7 @@ Pass nothing to inject all plugin HTML files without a prefix of the format spec
 
 */}}
 
+{{ printf "<!--plugin-precision-injection v1.0.0-->" | safeHTML }}
 
 {{/* Check whether a prefix has been provided  */}}
 {{ with . }}
