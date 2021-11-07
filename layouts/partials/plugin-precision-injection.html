@@ -10,44 +10,48 @@ keys:
 
 */}}
 
-{{- /* printf "<!--plugin-precision-injection v1.0.0-->" | safeHTML */}}
+{{- $comments := and (eq site.Params.plugin_precision_injection_html_comments "true") (templates.Exists "partials/utilities/html-comment.html") -}}
 
 {{- /* Capture the context */}}
-{{- $context := .context }}
+{{- $context := .context -}}
 
 {{- /* Check whether a prefix has been provided  */}}
-{{- with .prefix }}
+{{- with .prefix -}}
 
-  {{- $prefix := . | findRE "^[A-Z_]+$" }}
-  {{- if $prefix }}{{ $prefix = index $prefix 0 }}{{ end }}
+  {{- $prefix := . | findRE "^[A-Z_]+$" -}}
+  {{- if $prefix }}{{ $prefix = index $prefix 0 }}{{ end -}}
 
-  {{- if $prefix }}
+  {{- if $prefix -}}
 
-    {{- $prefix := printf "%s." $prefix }}
+    {{- $prefix := printf "%s." $prefix -}}
 
-    {{- range $include_directive := site.Params.plugins_html | uniq }}
+    {{- range $include_directive := site.Params.plugins_html | uniq -}}
   
-      {{- if (hasPrefix $include_directive $prefix) }}
+      {{- if (hasPrefix $include_directive $prefix) -}}
     
-        {{- $include_file := $include_directive | strings.TrimPrefix $prefix }}
+        {{- $include_file := $include_directive | strings.TrimPrefix $prefix -}}
+        
+        {{ if $comments }}{{ partial "utilities/html-comment.html" $include_file }}{{ end }}
+        {{ partial $include_file $context }}
   
-        {{- partial $include_file $context }}
+      {{- end -}}
   
-      {{- end }}
-  
-     {{- end }}
+     {{- end -}}
      
-   {{- end }}
+   {{- end -}}
 
 {{- /* Otherwise, inject all non-prefixed plugin HTML files */}}   
-{{- else }}
+{{- else -}}
 
-  {{- range $include_directive := site.Params.plugins_html | uniq }}
+  {{- range $include_directive := site.Params.plugins_html | uniq -}}
   
-    {{- $prefix := $include_directive | findRE "^[A-Z_]+[.].*" }}
+    {{- $prefix := $include_directive | findRE "^[A-Z_]+[.].*" -}}
     
-    {{- if not $prefix }}{{ partial $include_directive $context }}{{ end }}
+    {{- if not $prefix -}}
+    {{ if $comments }}{{ partial "utilities/html-comment.html" $include_directive }}{{ end }}
+    {{ partial $include_directive $context }}
+    {{- end -}}
   
-  {{- end }}
+  {{- end -}}
 
-{{- end }}
+  {{- end -}}
