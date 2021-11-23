@@ -1,0 +1,36 @@
+{{- $config := site.Data.plugin_precision_injection_config | default site.Data.plugin_precision_injection.config -}}
+{{- $filters := dict -}}
+{{- if (and (isset $config "Filters") (reflect.IsMap $config.Filters)) -}}
+{{- $filters = $config.Filters -}}
+{{- end -}}
+
+{{- $context := .context -}}
+{{- with .partial -}}
+
+  {{- if (templates.Exists (printf "partials/%s" .)) -}}
+  
+    {{- $partial := . -}}
+  
+    {{- with (index $filters .) -}}
+    
+      {{- $path := path.Base $context.Permalink -}}
+      
+      {{- if (or (and (reflect.IsSlice .) (in . $path)) (eq $path .)) -}}
+      
+          {{- partial "html-comment.html" . }}
+          
+          {{- partial $partial $context }}
+          
+      {{- end -}}
+    
+    {{- else -}}
+            
+      {{- partial "html-comment.html" . }}
+        
+      {{- partial $partial $context }}
+    
+    {{- end -}}
+      
+  {{- end -}}
+  
+{{- end -}}

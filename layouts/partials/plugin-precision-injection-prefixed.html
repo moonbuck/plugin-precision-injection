@@ -1,0 +1,60 @@
+{{- /* 
+
+This partial expects a dictionary as its parameter.
+
+keys:
+
+'prefix': Pass a prefix of the form 'I_AM_A_PREFIX' or, more simply 'PREFIX' (the prefixes I personally use are currently HEAD_TOP, ABOVE_HEADER, BELOW_FOOTER, FOOTER) to inject only plugin HTML files whose include directive includes the prefix followed by a dot followed by the actual file name. Otherwise leave this `undefined` to inject all plugin HTML files without a prefix of the format specified above.
+
+'context': The page context partials expect to receive (usually a '.').
+
+*/}}
+
+{{- $config := site.Data.plugin_precision_injection_config | default site.Data.plugin_precision_injection.config -}}
+
+{{- /* Capture the context */}}
+{{- $context := .context -}}
+
+{{- /* Check whether a prefix has been provided  */}}
+{{- with .prefix -}}
+
+  {{- $prefix := . | findRE "^[A-Z_]+$" -}}
+  {{- if $prefix }}{{ $prefix = index $prefix 0 }}{{ end -}}
+
+  {{- if $prefix -}}
+
+    {{- $prefix := printf "%s." $prefix -}}
+
+    {{- range $directive := site.Params.plugins_html | uniq -}}
+  
+      {{- if (hasPrefix $directive $prefix) -}}
+    
+        {{- $partial := $directive | strings.TrimPrefix $prefix -}}
+        
+        {{- $params := dict "partial" $partial "context" $context -}}
+        {{- partial "inject-maybe.html" $params -}}
+        
+      {{- end -}}
+  
+     {{- end -}}
+     
+   {{- end -}}
+
+{{- /* Otherwise, inject all non-prefixed plugin HTML files */}}   
+{{- else -}}
+
+  {{- range $partial := site.Params.plugins_html | uniq -}}
+  
+    {{- $prefix := $partial | findRE "^[A-Z_]+[.].*" -}}
+    
+    {{- if (not $prefix) -}}
+    
+        {{- $params := dict "partial" $partial "context" $context -}}
+        {{- partial "inject-maybe.html" $params -}}
+        
+    {{- end -}}
+  
+  {{- end -}}
+
+{{- end -}}
+

@@ -4,8 +4,6 @@ This partial expects a dictionary as its parameter.
 
 keys:
 
-'prefix': Pass a prefix of the form 'I_AM_A_PREFIX' or, more simply 'PREFIX' (the prefixes I personally use are currently HEAD_TOP, ABOVE_HEADER, BELOW_FOOTER, FOOTER) to inject only plugin HTML files whose include directive includes the prefix followed by a dot followed by the actual file name. Otherwise leave this `undefined` to inject all plugin HTML files without a prefix of the format specified above.
-
 'location': A key in the config data file with a slice of files to inject.
 
             For example:
@@ -31,22 +29,37 @@ keys:
               If an empty string is passed the plugin will check for a default
               location set in the data file as DefaultLocation. Failing that
               the plugin will check for an entry under DEFAULT.
-              
-
+  
+  
 'context': The page context partials expect to receive (usually a '.').
 
 */}}
 
-{{- if (and (reflect.IsMap .) .context) -}}
+{{- $config := site.Data.plugin_precision_injection_config | default site.Data.plugin_precision_injection.config -}}
+{{- $default_location := $config.DefaultLocation | default "DEFAULT" -}}
+{{- $location_map := $config.InjectionLocations | default dict -}}
 
-  {{- if (isset . "prefix") -}}
+{{- /* Capture the context */}}
+{{- $context := .context -}}
+
+{{- /* Check whether a location has been provided  */}}
+{{- with (.location | default $default_location) -}}
+
+  {{- /* Check for an entry for location */ -}}
+  {{- with (index $location_map .) -}}
+
+    {{- if (reflect.IsSlice .) -}}
   
-    {{- partial "plugin-precision-injection-prefixed.html" . -}}
-    
-  {{- else if (isset . "location") -}}
-    
-    {{- partial "plugin-precision-injection-location.html" . -}}
+      {{- /* Iterate the list */ -}}
+      {{- range $partial := . -}}
+        
+        {{- $params := dict "partial" $partial "context" $context -}}
+        {{- partial "inject-maybe.html" $params -}}
+          
+      {{- end -}}
+      
+    {{- end -}}
   
   {{- end -}}
-
+     
 {{- end -}}
