@@ -13,7 +13,7 @@
   
     {{- with (index $filters .) -}}
     
-      {{- $path := path.Base $context.Permalink -}}
+      {{- $path := (urls.Parse $context.Permalink).Path -}}
       
       {{- if (or (and (reflect.IsSlice .) (in . $path)) (eq $path .)) -}}
       
