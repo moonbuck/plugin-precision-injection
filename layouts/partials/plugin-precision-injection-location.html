@@ -54,7 +54,7 @@ keys:
       {{- range $partial := . -}}
         
         {{- $params := dict "partial" $partial "context" $context -}}
-        {{- partial "inject-maybe.html" $params -}}
+        {{- partial "inject-html-maybe.html" $params -}}
           
       {{- end -}}
       

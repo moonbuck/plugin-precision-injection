@@ -1,0 +1,12 @@
+{{- with .context -}}
+
+{{- $context := . -}}
+
+{{- range site.Params.plugins_js -}}
+
+{{- $params := dict "script" . "context" $context -}}
+{{- partial "inject-js-maybe.html" $params -}}
+
+{{- end -}}
+
+{{- end -}}

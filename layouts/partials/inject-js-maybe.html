@@ -1,0 +1,28 @@
+{{- $config := site.Data.plugin_precision_injection_config | default site.Data.plugin_precision_injection.config -}}
+{{- $filters := dict -}}
+{{- if (and (isset $config "Filters") (reflect.IsMap $config.Filters)) -}}
+{{- $filters = $config.Filters -}}
+{{- end -}}
+
+{{- $context := .context -}}
+{{- with .script -}}
+
+  {{- $script := . -}}
+  
+  {{- with (index $filters .) -}}
+    
+    {{- $path := path.Base $context.Permalink -}}
+      
+    {{- if (or (and (reflect.IsSlice .) (in . $path)) (eq $path .)) -}}
+            
+<script src="{{ $script }}"></script>
+          
+    {{- end -}}
+    
+  {{- else -}}
+            
+<script src="{{ $script }}"></script>
+
+  {{- end -}}
+  
+{{- end -}}

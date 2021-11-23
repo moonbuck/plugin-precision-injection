@@ -4,7 +4,13 @@ This partial expects a dictionary as its parameter.
 
 keys:
 
-'prefix': Pass a prefix of the form 'I_AM_A_PREFIX' or, more simply 'PREFIX' (the prefixes I personally use are currently HEAD_TOP, ABOVE_HEADER, BELOW_FOOTER, FOOTER) to inject only plugin HTML files whose include directive includes the prefix followed by a dot followed by the actual file name. Otherwise leave this `undefined` to inject all plugin HTML files without a prefix of the format specified above.
+'prefix': Pass a prefix of the form 'I_AM_A_PREFIX' or, more simply
+          'PREFIX' (the prefixes I personally use are currently HEAD_TOP,
+          ABOVE_HEADER, BELOW_FOOTER, FOOTER) to inject only plugin HTML files
+          whose include directive includes the prefix followed by a dot
+          followed by the actual file name. Otherwise leave this `undefined` to
+          inject all plugin HTML files without a prefix of the format specified
+          above.
 
 'location': A key in the config data file with a slice of files to inject.
 
@@ -32,6 +38,8 @@ keys:
               location set in the data file as DefaultLocation. Failing that
               the plugin will check for an entry under DEFAULT.
               
+ 'link': 'stylesheets' to load plugin CSS 
+          or 'scripts' to load plugin javascripts
 
 'context': The page context partials expect to receive (usually a '.').
 
@@ -46,6 +54,18 @@ keys:
   {{- else if (isset . "location") -}}
     
     {{- partial "plugin-precision-injection-location.html" . -}}
+    
+  {{- else if (isset . "link") -}}
+  
+    {{- if (eq .link "stylesheets") -}}
+    
+    {{- partial "plugin-precision-injection-stylesheets.html" . -}}
+    
+    {{- else if (eq .link "scripts") -}}
+    
+    {{- partial "plugin-precision-injection-scripts.html" . -}}
+    
+    {{- end -}}
   
   {{- end -}}
 

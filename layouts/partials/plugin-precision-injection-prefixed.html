@@ -32,7 +32,7 @@ keys:
         {{- $partial := $directive | strings.TrimPrefix $prefix -}}
         
         {{- $params := dict "partial" $partial "context" $context -}}
-        {{- partial "inject-maybe.html" $params -}}
+        {{- partial "inject-html-maybe.html" $params -}}
         
       {{- end -}}
   
@@ -50,11 +50,10 @@ keys:
     {{- if (not $prefix) -}}
     
         {{- $params := dict "partial" $partial "context" $context -}}
-        {{- partial "inject-maybe.html" $params -}}
+        {{- partial "inject-html-maybe.html" $params -}}
         
     {{- end -}}
   
   {{- end -}}
 
 {{- end -}}
-
