@@ -1,6 +1,0 @@
-{{- $config := site.Data.plugin_precision_injection_config | default site.Data.plugin_precision_injection.config -}}
-{{- $comments := site.Params.plugin_precision_injection_html_comments -}}
-{{- $comments = $comments | default $config.HTMLComments -}}
-{{- if $comments -}}
-{{ printf "\n<!--%s-->\n" . | safeHTML }}
-{{- end -}}

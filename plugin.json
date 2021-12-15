@@ -1,12 +1,5 @@
 {
-  "version": "3.0.1",
+  "version": "4.0.0",
   "title": "Moondeer's Precision Injection",
-  "description": "Facilitates injecting plugin html in precise locations",
-  "fields": [
-    {
-      "field": "params.plugin_precision_injection_html_comments",
-      "label": "Print HTML Comments",
-      "placeholder": "false"
-    }
-  ]
+  "description": "Facilitates injecting plugin html in precise locations"
 }

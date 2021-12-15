@@ -1,40 +1,59 @@
-{{- with .context -}}
+{{- /* 
 
-{{- $context := . -}}
+This partial expects a dictionary as its parameter.
 
-{{- range site.Params.plugins_css -}}
+keys:
 
-{{- template "inject-css-maybe" (dict "stylesheet" . "context" $context) -}}
+'context': The page context (aka "the dot").
 
-{{- end -}}
+*/}}
 
-{{- end -}}
-
-{{- define "inject-css-maybe" -}}
+{{- /* 
+  Retrieve the configuration and pull out what we need.
+  */ -}}
 
 {{- $Config := .context.Scratch.Get "plugin-precision-injection" -}}
-{{- $context := .context -}}
+{{- $HTMLComments := $Config.HTMLComments -}}
+{{- $Filters := $Config.Filters -}}
 
-{{- with .stylesheet -}}
+{{- /* Retrieve the full list of plugin js includes. */ -}}
+{{- $Files := site.Params.plugins_css -}}
 
-  {{- $stylesheet := . -}}
+{{- /* Grab the path for the page being generated */ -}}
+{{- $Path := (urls.Parse .context.Permalink).Path -}}
+
+{{- /*
+  Create a list containing the items in $Files
+  that are not filtered out via the $Filters map
+  */ -}}
   
-  {{- with (index ($Config.Filters | default dict) .) -}}
-    
-    {{- $path := (urls.Parse $context.Permalink).Path -}}
-      
-    {{- if (or (and (reflect.IsSlice .) (in . $path)) (eq $path .)) -}}
-            
-<link rel="stylesheet" href="{{ $stylesheet }}" />
-          
-    {{- end -}}
-    
-  {{- else -}}
-            
-<link rel="stylesheet" href="{{ $stylesheet }}" />
+{{- $FilteredFiles := slice -}}
+{{- range $file := $Files -}}
 
-  {{- end -}}
-  
+{{- /* Retrieve the $Filters entry for $file (if it exists). */ -}}
+{{- $whitelist := index $Filters $file -}}
+
+{{- /* To simplify logic, ensure $whitelist is a slice. */ -}}
+{{- if (and $whitelist (not (reflect.IsSlice $whitelist))) -}}
+{{- $whitelist = slice $whitelist -}}
 {{- end -}}
 
+{{- /* Append $file if it has no entry or $Path is in the list. */ -}}
+{{- if (or (not $whitelist) (in $whitelist $file)) -}}
+{{- $FilteredFiles = $FilteredFiles | append $file -}}
 {{- end -}}
+
+{{- end -}} {{- /* range $file := $Files */ -}}
+
+{{- /* Inject the filtered list of files. */ -}}
+{{- range $file := $FilteredFiles  -}}
+
+{{- /* Insert HTML comment with $file if so flagged */-}}
+{{- if $HTMLComments -}}
+{{- printf "\n<!--precision-injection: %s-->\n" $file | safeHTML -}}
+{{- end -}}
+
+{{- /* Inject the file. */ -}}
+<link rel="stylesheet" href="{{ $file }}" />
+
+{{- end -}} {{- /* range $file := $FilteredFiles */ -}}

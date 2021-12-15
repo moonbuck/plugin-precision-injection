@@ -4,90 +4,38 @@ This partial expects a dictionary as its parameter.
 
 keys:
 
-'location': A key in the config data file with a slice of files to inject.
-
-            For example:
-            
-            [InjectionLocations]
-            HEAD_TOP = [ "google-tag-manager-head-script.html" ]
-            ABOVE_HEADER = [ "google-tag-manager-header-script.html" ]
-            BELOW_HEADER = []
-            FOOTER = []
-            BELOW_FOOTER = []
-            DEFAULT = [
-              "glightbox-injection.html",
-              "prism-injection.html",
-              "favicons.html",
-              "plausible-analytics-script.html",
-              "structured-data-injection.html",
-              "webmention-links.html",
-              "category-cloud-style.html",
-              "twitter-open-graph-cards.html",
-              "head/social-media-links.html"
-              ]
-
-              If an empty string is passed the plugin will check for a default
-              location set in the data file as DefaultLocation. Failing that
-              the plugin will check for an entry under DEFAULT.
+'location': The key into the Locations map for the list
+            of files to inject. Pass the empty string
+            to inject all files not assigned a location.
               
- 'link': 'stylesheets' to load plugin CSS 
-          or 'scripts' to load plugin javascripts
+'link': Pass 'css' to load plugin CSS. 
+        Pass 'js' to load plugin javascripts.
 
-'context': The page context partials expect to receive (usually a '.').
+'context': The page context (aka "the dot").
 
 */}}
 
-{{- /* Check whether the config has been loaded */ -}}
-{{- if not (.Scratch.Get "plugin-precision-injection") -}}
-{{- template "load-config" . -}}
-{{- end -}}
+{{- /* 
+  Only proceed when receiving a context 
+  */ -}}
+{{- if .context -}}
 
-{{- if (and (reflect.IsMap .) .context) -}}
-
-  {{- if (isset . "location") -}}
-    
-    {{- partial "plugin-precision-injection/location.html" . -}}
-    
-  {{- else if (isset . "link") -}}
-  
-    {{- if (eq .link "stylesheets") -}}
-    
-    {{- partial "plugin-precision-injection/stylesheets.html" . -}}
-    
-    {{- else if (eq .link "scripts") -}}
-    
-    {{- partial "plugin-precision-injection/scripts.html" . -}}
-    
-    {{- end -}}
-  
+  {{- /* Check whether the config has been loaded */ -}}  
+  {{- if not (.context.Scratch.Get "plugin-precision-injection") -}}
+    {{- partial "plugin-precision-injection/load-config.html" .context -}}
   {{- end -}}
 
-{{- end -}}
-
-{{- define "load-config" -}}
-
-{{- /* 
-  Insert the plugin version and build time 
-  */ -}}
-{{- $time := (time (sub now.Unix 28800)).Format "Jan 2 at 15:04" -}}
-{{ printf "\n<!-- Precision Injection v3.0.1 (built on %s) -->" $time | safeHTML }}
-
-{{- $Config := site.Data.plugin_precision_injection_config -}}
-{{- $Config  = $Config | default site.Data.plugin_precision_injection.config -}}
-
-{{- $HTMLComments := site.Params.plugin_precision_injection_html_comments -}}
-{{- $HTMLComments  = $HTMLComments | default $Config.HTMLComments -}}
-
-{{- $DefaultLocation := $Config.DefaultLocation | default "DEFAULT" -}}
-
-{{- $Locations := $Config.Locations | default dict -}}
-
-{{- $Filters := $Config.Filters | default dict -}}
-
-{{- $Parameters := dict "HTMLComments" $HTMLComments "DefaultLocation" $DefaultLocation "Locations" $Locations "Filters" $Filters -}}
-
-{{- .Scratch.Set "plugin-precision-injection" $Parameters -}}
-
-{{ printf "/n<!--plugin-precision-injection: Parameters\n%s\n-->" (jsonify .Scratch.Get "plugin-precision-injection") | safeHTML }}
+  {{- /* Invoke the location partial if a link parameter has not been passed */ -}}    
+  {{- if not .link -}}    
+    {{- partial "plugin-precision-injection/location.html" . -}}
+    
+  {{- /* Invoke the stylesheets partial if specified */ -}}
+  {{- else if (in (slice "css" "stylesheets" .link)) -}}  
+    {{- partial "plugin-precision-injection/stylesheets.html" . -}}
+      
+  {{- /* Invoke the scripts partial if specified */ -}}
+  {{- else if (in (slice "js" "scripts") .link) -}}    
+    {{- partial "plugin-precision-injection/scripts.html" . -}}      
+  {{- end -}}
 
 {{- end -}}
