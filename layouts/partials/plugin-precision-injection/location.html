@@ -82,15 +82,19 @@ keys:
 
 {{- end -}} {{- /* range $file := $ConfirmedFiles */ -}}
 
+{{- /* Store the partial path for brevity */ -}}
+{{- $comment := "plugin-precision-injection/injection-comment.html" -}}
+
 {{- /* Inject the filtered list of files. */ -}}
 {{- range $file := $FilteredFiles -}}
 
-{{- /* Insert HTML comment with $file if so flagged */ -}}
-{{- if $HTMLComments -}}
-{{- printf "\n<!--precision-injection: %s-->\n" $file | safeHTML -}}
-{{- end -}}
+{{- /* 
+  Inject the file wrapped in injection-comment invocations to
+  insert begin and end injection markers when flagged to do so.
+  */ -}}
 
-{{- /* Inject the file. */ -}}
+{{- partial $comment (slice "begin" $file $.context) -}}
 {{ partial $file $.context }}
+{{- partial $comment (slice "end" $file $.context) -}}
 
 {{- end -}} {{- /* range $file := $FilteredFiles */ -}}
