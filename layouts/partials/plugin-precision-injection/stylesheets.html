@@ -19,7 +19,7 @@
 
   {{- $stylesheet := . -}}
   
-  {{- with (index $Config.Filters .) -}}
+  {{- with (index ($Config.Filters | default dict) .) -}}
     
     {{- $path := (urls.Parse $context.Permalink).Path -}}
       
