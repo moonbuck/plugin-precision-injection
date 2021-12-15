@@ -83,9 +83,9 @@ keys:
 {{- end -}} {{- /* range $file := $ConfirmedFiles */ -}}
 
 {{- /* Inject the filtered list of files. */ -}}
-{{- range $file := $FilteredFiles  -}}
+{{- range $file := $FilteredFiles -}}
 
-{{- /* Insert HTML comment with $file if so flagged */-}}
+{{- /* Insert HTML comment with $file if so flagged */ -}}
 {{- if $HTMLComments -}}
 {{- printf "\n<!--precision-injection: %s-->\n" $file | safeHTML -}}
 {{- end -}}

@@ -30,7 +30,7 @@ keys:
     {{- partial "plugin-precision-injection/location.html" . -}}
     
   {{- /* Invoke the stylesheets partial if specified */ -}}
-  {{- else if (in (slice "css" "stylesheets" .link)) -}}  
+  {{- else if (in (slice "css" "stylesheets") .link) -}}  
     {{- partial "plugin-precision-injection/stylesheets.html" . -}}
       
   {{- /* Invoke the scripts partial if specified */ -}}
