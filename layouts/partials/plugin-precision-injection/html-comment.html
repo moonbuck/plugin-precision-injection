@@ -2,5 +2,5 @@
 {{- $comments := site.Params.plugin_precision_injection_html_comments -}}
 {{- $comments = $comments | default $config.HTMLComments -}}
 {{- if $comments -}}
-{{ printf "<!--%s-->" . | safeHTML }}
+{{ printf "\n<!--%s-->\n" . | safeHTML }}
 {{- end -}}

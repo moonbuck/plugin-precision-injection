@@ -1,0 +1,21 @@
+{{- /* 
+  Insert the plugin version and build time 
+  */ -}}
+{{- $time := (time (sub now.Unix 28800)).Format "Jan 2 at 15:04" -}}
+{{ printf "\n<!-- Precision Injection v3.0.1 (built on %s) -->" $time | safeHTML }}
+
+{{- $Config := site.Data.plugin_precision_injection_config -}}
+{{- $Config  = $Config | default site.Data.plugin_precision_injection.config -}}
+
+{{- $HTMLComments := site.Params.plugin_precision_injection_html_comments -}}
+{{- $HTMLComments  = $HTMLComments | default $Config.HTMLComments -}}
+
+{{- $DefaultLocation := $Config.DefaultLocation | default "DEFAULT" -}}
+
+{{- $Locations := $Config.Locations | default dict -}}
+
+{{- $Filters := $Config.Filters | default dict -}}
+
+{{- $Parameters := dict "HTMLComments" $HTMLComments "DefaultLocation" $DefaultLocation "Locations" $Locations "Filters" $Filters -}}
+
+{{- .Scratch.Set "plugin-precision-injection" $Parameters -}}

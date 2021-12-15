@@ -1,15 +1,25 @@
-{{- $config := site.Data.plugin_precision_injection_config | default site.Data.plugin_precision_injection.config -}}
-{{- $filters := dict -}}
-{{- if (and (isset $config "Filters") (reflect.IsMap $config.Filters)) -}}
-{{- $filters = $config.Filters -}}
+{{- with .context -}}
+
+{{- $context := . -}}
+
+{{- range site.Params.plugins_js -}}
+
+{{- template "inject-js-maybe" (dict "script" . "context" $context) -}}
+
 {{- end -}}
 
+{{- end -}}
+
+{{- define "inject-js-maybe" -}}
+
+{{- $Config := .context.Scratch.Get "plugin-precision-injection" -}}
 {{- $context := .context -}}
+
 {{- with .script -}}
 
   {{- $script := . -}}
   
-  {{- with (index $filters .) -}}
+  {{- with (index $Config.Filters .) -}}
     
     {{- $path := (urls.Parse $context.Permalink).Path -}}
       
@@ -24,5 +34,7 @@
 <script src="{{ $script }}"></script>
 
   {{- end -}}
+  
+{{- end -}}
   
 {{- end -}}

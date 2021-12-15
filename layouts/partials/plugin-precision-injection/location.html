@@ -1,0 +1,99 @@
+{{- /* 
+
+This partial expects a dictionary as its parameter.
+
+keys:
+
+'location': A key in the config data file with a slice of files to inject.
+
+            For example:
+            
+            [InjectionLocations]
+            HEAD_TOP = [ "google-tag-manager-head-script.html" ]
+            ABOVE_HEADER = [ "google-tag-manager-header-script.html" ]
+            BELOW_HEADER = []
+            FOOTER = []
+            BELOW_FOOTER = []
+            DEFAULT = [
+              "glightbox-injection.html",
+              "prism-injection.html",
+              "favicons.html",
+              "plausible-analytics-script.html",
+              "structured-data-injection.html",
+              "webmention-links.html",
+              "category-cloud-style.html",
+              "twitter-open-graph-cards.html",
+              "head/social-media-links.html"
+              ]
+
+              If an empty string is passed the plugin will check for a default
+              location set in the data file as DefaultLocation. Failing that
+              the plugin will check for an entry under DEFAULT.
+  
+  
+'context': The page context partials expect to receive (usually a '.').
+
+*/}}
+
+{{- $Config := .context.Scratch.Get "plugin-precision-injection" -}}
+
+{{- /* Capture the context */}}
+{{- $context := .context -}}
+
+{{- /* Check whether a location has been provided  */}}
+{{- with (.location | default $Config.DefaultLocation) -}}
+
+  {{- /* Check for an entry for location */ -}}
+  {{- with (index $Config.Locations .) -}}
+
+    {{- if (reflect.IsSlice .) -}}
+  
+      {{- /* Iterate the list */ -}}
+      {{- range $partial := . -}}
+        
+        {{- template "inject-html-maybe" (dict "partial" $partial "context" $context) -}}
+          
+      {{- end -}}
+      
+    {{- end -}}
+  
+  {{- end -}}
+     
+{{- end -}}
+
+{{- define "inject-html-maybe" -}}
+
+{{- $Config := .context.Scratch.Get "plugin-precision-injection" -}}
+{{- $context := .context -}}
+
+{{- with .partial -}}
+
+  {{- if (templates.Exists (printf "partials/%s" .)) -}}
+  
+    {{- $partial := . -}}
+  
+    {{- with (index $Config.Filters .) -}}
+    
+      {{- $path := (urls.Parse $context.Permalink).Path -}}
+      
+      {{- if (or (and (reflect.IsSlice .) (in . $path)) (eq $path .)) -}}
+      
+          {{- partial "plugin-precision-injection/html-comment.html" . -}}
+          
+          {{- partial $partial $context }}
+          
+      {{- end -}}
+    
+    {{- else -}}
+            
+      {{- partial "plugin-precision-injection/html-comment.html" . -}}
+        
+      {{- partial $partial $context }}
+    
+    {{- end -}}
+      
+  {{- end -}}
+  
+{{- end -}}
+
+{{- end -}}

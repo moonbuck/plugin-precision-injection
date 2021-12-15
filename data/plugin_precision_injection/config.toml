@@ -1,0 +1,54 @@
+# Flag controlling whether HTML comments shall be inserted 
+# with injected file names.
+#
+HTMLComments = true
+
+# The key used for the default HTML injection location in the 
+# InjectionLocations dictionary.
+#
+DefaultLocation = "DEFAULT"
+
+# A dictionary for assigning injection locations to specific files.
+# The value set for DefaultLocation should be used to assign
+# the traditional (towards the bottom of the page <head>) location.
+# The additional locations are entirely up to you, as you will be
+# passing them from your theme or plugin to inject the file list.
+#
+# Here's how mine looks:
+# [InjectionLocations]
+# HEAD_TOP = [ "google-tag-manager-head-script.html" ]
+# ABOVE_HEADER = [ "google-tag-manager-header-script.html" ]
+# BELOW_HEADER = []
+# FOOTER = []
+# BELOW_FOOTER = []
+# DEFAULT = [
+#   "glightbox-injection.html",
+#   "prism-injection.html",
+#   "favicons.html",
+#   "plausible-analytics-script.html",
+#   "structured-data-injection.html",
+#   "webmention-links.html",
+#   "category-cloud-style.html",
+#   "twitter-open-graph-cards.html",
+#   "head/social-media-links.html"
+# ]
+[Locations]
+HEAD_TOP = []
+ABOVE_HEADER = []
+BELOW_HEADER = []
+FOOTER = []
+BELOW_FOOTER = []
+DEFAULT = []
+
+# A dictionary for restricting a file's injection by page path.
+# When an plugin include appears as a key in this dictionary,
+# it will only be injected into page's whose path has been
+# included in the assigned list.
+#
+# Here's how mine looks:
+# [Filters]
+# "category-cloud-style.html" = [ "/cloud/" ]
+# "/assets/css/gallery.css" = [ "/gallery/" ]
+# "/assets/css/bookshelves.css" = [ "/bookshelf/" ]
+# "/assets/js/bookshelves.js" = [ "/bookshelf/" ]
+[Filters]

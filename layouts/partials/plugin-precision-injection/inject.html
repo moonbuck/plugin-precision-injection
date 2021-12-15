@@ -29,37 +29,32 @@ keys:
               If an empty string is passed the plugin will check for a default
               location set in the data file as DefaultLocation. Failing that
               the plugin will check for an entry under DEFAULT.
-  
-  
+              
+ 'link': 'stylesheets' to load plugin CSS 
+          or 'scripts' to load plugin javascripts
+
 'context': The page context partials expect to receive (usually a '.').
 
 */}}
 
-{{- $config := site.Data.plugin_precision_injection_config | default site.Data.plugin_precision_injection.config -}}
-{{- $default_location := $config.DefaultLocation | default "DEFAULT" -}}
-{{- $location_map := $config.InjectionLocations | default dict -}}
+{{- if (and (reflect.IsMap .) .context) -}}
 
-{{- /* Capture the context */}}
-{{- $context := .context -}}
-
-{{- /* Check whether a location has been provided  */}}
-{{- with (.location | default $default_location) -}}
-
-  {{- /* Check for an entry for location */ -}}
-  {{- with (index $location_map .) -}}
-
-    {{- if (reflect.IsSlice .) -}}
+  {{- if (isset . "location") -}}
+    
+    {{- partial "plugin-precision-injection/location.html" . -}}
+    
+  {{- else if (isset . "link") -}}
   
-      {{- /* Iterate the list */ -}}
-      {{- range $partial := . -}}
-        
-        {{- $params := dict "partial" $partial "context" $context -}}
-        {{- partial "inject-html-maybe.html" $params -}}
-          
-      {{- end -}}
-      
+    {{- if (eq .link "stylesheets") -}}
+    
+    {{- partial "plugin-precision-injection/stylesheets.html" . -}}
+    
+    {{- else if (eq .link "scripts") -}}
+    
+    {{- partial "plugin-precision-injection/scripts.html" . -}}
+    
     {{- end -}}
   
   {{- end -}}
-     
+
 {{- end -}}
