@@ -16,11 +16,11 @@ keys:
   Retrieve the configuration and pull out what we need.
   */ -}}
 
-{{- $Config := .context.Scratch.Get "plugin-precision-injection" -}}
-{{- $Locations := $Config.Locations -}}
-{{- $Assigned := $Config.Assigned -}}
-{{- $HTMLComments := $Config.HTMLComments -}}
-{{- $Filters := $Config.Filters -}}
+{{- $Parameters := .context.Scratch.Get "plugin-precision-injection.Parameters" -}}
+{{- $Locations := $Parameters.Locations -}}
+{{- $Assigned := $Parameters.Assigned -}}
+{{- $HTMLComments := $Parameters.Config.HTMLComments -}}
+{{- $Filters := $Parameters.Filters -}}
 
 {{- /* Retrieve the full list of plugin html includes. */ -}}
 {{- $Files := site.Params.plugins_html -}}

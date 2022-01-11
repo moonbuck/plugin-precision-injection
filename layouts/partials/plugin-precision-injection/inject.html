@@ -21,8 +21,22 @@ keys:
 {{- if .context -}}
 
   {{- /* Check whether the config has been loaded */ -}}  
-  {{- if not (.context.Scratch.Get "plugin-precision-injection") -}}
-    {{- partial "plugin-precision-injection/load-config.html" .context -}}
+  {{- if not (.context.Scratch.Get "plugin-precision-injection.Parameters") -}}
+  
+    {{- partial "plugin-precision-injection/load-parameters.html" .context -}}
+    
+    {{- with .context.Scratch.Get "plugin-precision-injection.Parameters" -}}
+    
+    {{- /* Insert the plugin version and build time */ -}}
+    {{- $time := (time (sub now.Unix 28800)).Format "Jan 2 at 15:04" -}}
+    {{ printf "\n<!-- Precision Injection v%s (built on %s) -->\n" .Config.Version $time | safeHTML }}
+    
+    {{- if .Config.DebugPrint -}}
+    {{- printf "\n<!--\nplugin-precision-injection.Parameters:\n%s\n-->" (jsonify .) | safeHTML -}}
+    {{- end -}}
+    
+    {{- end -}}
+  
   {{- end -}}
 
   {{- /* Invoke the location partial if a link parameter has not been passed */ -}}    

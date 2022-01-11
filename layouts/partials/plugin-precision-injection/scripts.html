@@ -12,9 +12,9 @@ keys:
   Retrieve the configuration and pull out what we need.
   */ -}}
 
-{{- $Config := .context.Scratch.Get "plugin-precision-injection" -}}
-{{- $HTMLComments := $Config.HTMLComments -}}
-{{- $Filters := $Config.Filters -}}
+{{- $Parameters := .context.Scratch.Get "plugin-precision-injection.Parameters" -}}
+{{- $HTMLComments := $Parameters.Config.HTMLComments -}}
+{{- $Filters := $Parameters.Filters -}}
 
 {{- /* Retrieve the full list of plugin js includes. */ -}}
 {{- $Files := site.Params.plugins_js -}}
