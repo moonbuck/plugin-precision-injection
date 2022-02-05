@@ -1,5 +1,5 @@
 {
   "version": "5.0.0",
   "title": "Moondeer's Precision Injection",
-  "description": "Facilitates injecting plugin html in precise locations"
+  "description": "Facilitates injecting plugin html, css, and js in precise locations. A README is on the way should anyone take interest. This one is pretty niche. See the documented configuration files in the plugin's data directory for plugin parameters and feel free to holler at me with any questions."
 }
