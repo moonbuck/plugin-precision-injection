@@ -32,7 +32,7 @@ keys:
     {{ printf "\n<!-- Precision Injection v%s (built on %s) -->\n" .Config.Version $time | safeHTML }}
     
     {{- if .Config.DebugPrint -}}
-    {{- printf "\n<!--\nplugin-precision-injection.Parameters:\n%s\n-->" (jsonify .) | safeHTML -}}
+    {{- printf "\n<!--\nplugin-precision-injection.Parameters:\n%s\n-->" (. | jsonify (dict "prefix" " " "indent" "  ")) | safeHTML -}}
     {{- end -}}
     
     {{- end -}}
